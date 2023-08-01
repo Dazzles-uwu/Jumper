@@ -14,7 +14,7 @@ public class Player {
         this.winGame = false;
         this.fuelCellFound = 0;
         this.device = new Device();
-        this.currentBuilding  = 1;
+        this.currentBuilding = 1;
     }
 
     public static int getTurn() {
@@ -63,5 +63,12 @@ public class Player {
 
     public void setCurrentBuilding(int currentBuilding) {
         this.currentBuilding = currentBuilding;
+    }
+
+    public String displayPlayerInfo()
+    {
+        return "Player Name: " + this.name + "\n" +
+                "Player Turn: " + turn + "\n" +
+                "Device Fuel: " + this.device.getDeviceBattery();
     }
 }

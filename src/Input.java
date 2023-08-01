@@ -7,7 +7,7 @@ public class Input {
 
     }
 
-    public char acceptCharInput(String message, int index)
+    public static char acceptCharInput(String message, int index)
     {
         Scanner keyboard = new Scanner(System.in);
 
@@ -15,7 +15,7 @@ public class Input {
         return keyboard.nextLine().charAt(index);
     }
 
-    public int acceptIntegerInput(String message)
+    public static int acceptIntegerInput(String message)
     {
         int integerInput = 0;
         Scanner keyboard = new Scanner(System.in);
@@ -42,5 +42,25 @@ public class Input {
 
         System.out.println(message);
         return keyboard.nextLine();
+    }
+
+    public static String playerNameInput(String message)
+    {
+        Scanner keyboard = new Scanner(System.in);
+        boolean validName = false;
+        String name = "";
+
+        while (!validName)
+        {
+            System.out.println(message);
+            name = keyboard.nextLine();
+
+            if (!Validation.isBlank(name) && Validation.lengthWithinRange(name, 3, 12))
+            {
+                validName = true;
+            }
+        }
+
+        return name;
     }
 }
