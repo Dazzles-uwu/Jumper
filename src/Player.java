@@ -1,11 +1,12 @@
 public class Player {
 
     public static int turn = 0;
-    private String name;
-    private boolean winGame;
+    private int currentBuilding;
     private int fuelCellFound;
     private Device device;
-    private int currentBuilding;
+    private String name;
+    private boolean winGame;
+
 
     public Player()
     {

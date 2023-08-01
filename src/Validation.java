@@ -12,6 +12,6 @@ public class Validation {
 
     public static boolean lengthWithinRange(String input, int min, int max)
     {
-        return input.length() > min && input.length() < max;
+        return input.length() >= min && input.length() <= max;
     }
 }
