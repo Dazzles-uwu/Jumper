@@ -30,7 +30,7 @@ public class Input {
             }
             catch (Exception e)
             {
-                System.out.println("Invalid" + e);
+                System.out.println("Invalid " + e);
             }
         }
         return integerInput;

@@ -4,6 +4,8 @@ public class Jumper {
 
     public static final String inputFile = "src/buildings.txt";
     public static final String outputFile = "src/outcome.txt";
+    public static final String FORWARD = "forward";
+    public static final String BACKWARD = "backward";
     private Player player;
     private Dimension dimension;
 
@@ -24,6 +26,7 @@ public class Jumper {
     {
         promptUserName();
         displayWorld();
+        promptUserInput();
     }
 
     public void promptUserName()
@@ -64,6 +67,51 @@ public class Jumper {
 
     public void promptUserInput()
     {
+        String optionContent = "";
+        String[] optionArray = {"Press 1 to jump forward", "Press 2 to jump backward", "Press 3 to skip a turn"};
+        for (String s : optionArray) {
+            optionContent += s + "\n";
+        }
+
+        boolean validNumber = false;
+
+        while (!validNumber)
+        {
+            int userInput = Input.acceptIntegerInput(optionContent);
+
+            if (userInput == 1)
+            {
+                //Jump forward
+                if (this.dimension.canPlayerJump(this.player.getCurrentBuilding(), Jumper.FORWARD)) {
+                    playerJump();
+                    validNumber = true;
+                }
+                else {
+                    System.out.println("The Player cannot jump as it will break game rule, please choose another option");
+                }
+
+            }
+            else if (userInput == 2)
+            {
+                //Jump backward
+                if (this.dimension.canPlayerJump(this.player.getCurrentBuilding(), Jumper.BACKWARD)) {
+                    playerJump();
+                    validNumber = true;
+                }
+                else {
+                    System.out.println("The Player cannot jump as it will break game rule, please choose another option");
+                }
+            }
+            else if (userInput == 3)
+            {
+                //Stay still
+                validNumber = true;
+            }
+            else
+            {
+                System.out.println("An option for " + userInput + " does not exist");
+            }
+        }
 
     }
 

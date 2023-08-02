@@ -76,13 +76,30 @@ public class Dimension {
         return dimensionContent;
     }
 
-    public int getPlayerJumpHeight(int playerBuilding)
+    private int getPlayerJumpHeight(int playerBuilding)
     {
         if (!this.buildings.isEmpty())
         {
-            return this.buildings.get(playerBuilding).getHeight();
+            // - 1 because the .get starts from 0 and playerBuilding starts from 1
+            return this.buildings.get(playerBuilding - 1).getHeight();
         }
         return 0;
+    }
+
+    public boolean canPlayerJump(int playerCurrentBuilding, String lateralMovement)
+    {
+        if (!this.buildings.isEmpty())
+        {
+            if (lateralMovement.equals(Jumper.FORWARD))
+            {
+                return playerCurrentBuilding + getPlayerJumpHeight(playerCurrentBuilding) <= 15;
+            }
+            else if (lateralMovement.equals(Jumper.BACKWARD))
+            {
+                return playerCurrentBuilding - getPlayerJumpHeight(playerCurrentBuilding) >= 1;
+            }
+        }
+        return false;
     }
 
     public ArrayList<Building> getBuildings() {
