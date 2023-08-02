@@ -6,8 +6,13 @@ public class Jumper {
     public static final String outputFile = "src/outcome.txt";
     public static final String FORWARD = "forward";
     public static final String BACKWARD = "backward";
+    public static final String RECHARGE = "recharge";
+    public static final String DEPLETE = "deplete";
+    public static final String STAY = "stay";
+    public static final String WEB = "web";
     private Player player;
     private Dimension dimension;
+    private boolean gameOver;
 
     public static void main(String[] args)  //static method
     {
@@ -20,13 +25,18 @@ public class Jumper {
     {
         this.player = new Player();
         this.dimension = new Dimension();
+        this.gameOver = false;
     }
 
     public void startProgram()
     {
         promptUserName();
-        displayWorld();
-        promptUserInput();
+        while (!this.gameOver)
+        {
+            displayWorld();
+            promptUserInput();
+        }
+
     }
 
     public void promptUserName()
@@ -83,7 +93,7 @@ public class Jumper {
             {
                 //Jump forward
                 if (this.dimension.canPlayerJump(this.player.getCurrentBuilding(), Jumper.FORWARD)) {
-                    playerJump();
+                    playerJump(Jumper.FORWARD);
                     validNumber = true;
                 }
                 else {
@@ -95,7 +105,7 @@ public class Jumper {
             {
                 //Jump backward
                 if (this.dimension.canPlayerJump(this.player.getCurrentBuilding(), Jumper.BACKWARD)) {
-                    playerJump();
+                    playerJump(Jumper.BACKWARD);
                     validNumber = true;
                 }
                 else {
@@ -105,6 +115,7 @@ public class Jumper {
             else if (userInput == 3)
             {
                 //Stay still
+                playerStayed();
                 validNumber = true;
             }
             else
@@ -115,14 +126,38 @@ public class Jumper {
 
     }
 
-    public void playerJump()
+    public void playerJump(String lateralMovement)
     {
+        int newPlayerPosition = this.dimension.getPlayerNewBuildingPosition(this.player.getCurrentBuilding(), lateralMovement);
+        int currentPlayerPosition = this.player.getCurrentBuilding();
 
+        if (this.dimension.isFuelCell(newPlayerPosition))
+        {
+            int cellAmountFound = this.player.getFuelCellFound();
+            this.player.setFuelCellFound(cellAmountFound + 1);
+            calculateBattery(Jumper.RECHARGE, currentPlayerPosition, newPlayerPosition);
+        }
+
+        if (this.dimension.isWebTrapped(newPlayerPosition))
+        {
+            calculateBattery(Jumper.WEB, currentPlayerPosition, newPlayerPosition);
+        }
+
+        //This function always runs because it always cost fuel to jump
+        calculateBattery(Jumper.DEPLETE, currentPlayerPosition, newPlayerPosition);
+
+        if (newPlayerPosition != 0)
+        {
+            this.player.setCurrentBuilding(newPlayerPosition);
+        }
+        Player.turn++;
     }
 
     public void playerStayed()
     {
-
+        //We placed some random arbitrary number inside the second and third parameter as we do not need it for stay
+        calculateBattery(Jumper.STAY, 0, 0);
+        Player.turn++;
     }
 
     public void saveStatistics()
@@ -157,5 +192,44 @@ public class Jumper {
     public void writeFile()
     {
 
+    }
+
+    public void calculateBattery(String jumperStatus, int currentPlayerPosition, int newPlayerPosition)
+    {
+        int currentCharge = this.player.getDeviceBattery();
+
+        if (jumperStatus.equals(Jumper.RECHARGE))
+        {
+            this.player.addDeviceBattery(5);
+        }
+        if (jumperStatus.equals(Jumper.WEB))
+        {
+            if (currentCharge - 5 <= 0)
+            {
+                this.gameOver = true;
+            }
+            this.player.removeDeviceBattery(5);
+        }
+        if (jumperStatus.equals(Jumper.DEPLETE))
+        {
+            int buildingOneHeight = this.dimension.getPlayerJumpHeight(currentPlayerPosition);
+            int buildingTwoHeight = this.dimension.getPlayerJumpHeight(newPlayerPosition);
+            int jumpCost = Math.abs(buildingOneHeight - buildingTwoHeight) + 1;
+
+            //Checks to see if there is anymore battery left
+            if (currentCharge - jumpCost <= 0)
+            {
+                this.gameOver = true;
+            }
+            this.player.removeDeviceBattery(jumpCost);
+        }
+        if (jumperStatus.equals(Jumper.STAY))
+        {
+            if (currentCharge - 1 <= 0)
+            {
+                this.gameOver = true;
+            }
+            this.player.removeDeviceBattery(1);
+        }
     }
 }

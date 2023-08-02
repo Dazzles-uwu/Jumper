@@ -76,7 +76,7 @@ public class Dimension {
         return dimensionContent;
     }
 
-    private int getPlayerJumpHeight(int playerBuilding)
+    public int getPlayerJumpHeight(int playerBuilding)
     {
         if (!this.buildings.isEmpty())
         {
@@ -86,17 +86,35 @@ public class Dimension {
         return 0;
     }
 
+    public int getPlayerNewBuildingPosition(int playerCurrentBuilding, String lateralMovement)
+    {
+        if (lateralMovement.equals(Jumper.FORWARD))
+        {
+            return playerCurrentBuilding + getPlayerJumpHeight(playerCurrentBuilding);
+        }
+        else if (lateralMovement.equals(Jumper.BACKWARD))
+        {
+            return playerCurrentBuilding - getPlayerJumpHeight(playerCurrentBuilding);
+        }
+        return 0;
+    }
+
     public boolean canPlayerJump(int playerCurrentBuilding, String lateralMovement)
     {
         if (!this.buildings.isEmpty())
         {
-            if (lateralMovement.equals(Jumper.FORWARD))
+            if (!isBuildingFrozen(playerCurrentBuilding))
             {
-                return playerCurrentBuilding + getPlayerJumpHeight(playerCurrentBuilding) <= 15;
-            }
-            else if (lateralMovement.equals(Jumper.BACKWARD))
-            {
-                return playerCurrentBuilding - getPlayerJumpHeight(playerCurrentBuilding) >= 1;
+                if (lateralMovement.equals(Jumper.FORWARD))
+                {
+                    return playerCurrentBuilding + getPlayerJumpHeight(playerCurrentBuilding) <= 15;
+                }
+                else if (lateralMovement.equals(Jumper.BACKWARD))
+                {
+                    return playerCurrentBuilding - getPlayerJumpHeight(playerCurrentBuilding) >= 1;
+                }
+            } else {
+                System.out.println("You are on a frozen building. You must skip a turn");
             }
         }
         return false;
@@ -128,6 +146,46 @@ public class Dimension {
                     building.isFreeze() + "\n";
         }
         return buildings;
+    }
+
+    public boolean isBuildingFrozen(int playerBuilding)
+    {
+        if (!this.buildings.isEmpty())
+        {
+            // - 1 because the .get starts from 0 and playerBuilding starts from 1
+            return this.buildings.get(playerBuilding - 1).isFreeze();
+        }
+        return false;
+    }
+
+    public boolean isExitPortal(int playerBuilding)
+    {
+        if (!this.buildings.isEmpty())
+        {
+            // - 1 because the .get starts from 0 and playerBuilding starts from 1
+            return this.buildings.get(playerBuilding - 1).isExitPortal();
+        }
+        return false;
+    }
+
+    public boolean isFuelCell(int playerBuilding)
+    {
+        if (!this.buildings.isEmpty())
+        {
+            // - 1 because the .get starts from 0 and playerBuilding starts from 1
+            return this.buildings.get(playerBuilding - 1).isFuelCell();
+        }
+        return false;
+    }
+
+    public boolean isWebTrapped(int playerBuilding)
+    {
+        if (!this.buildings.isEmpty())
+        {
+            // - 1 because the .get starts from 0 and playerBuilding starts from 1
+            return this.buildings.get(playerBuilding - 1).isWeb();
+        }
+        return false;
     }
 
 }

@@ -57,6 +57,30 @@ public class Player {
         this.device = device;
     }
 
+    public int getDeviceBattery()
+    {
+        return this.device.getDeviceBattery();
+    }
+
+    public void addDeviceBattery(int charge)
+    {
+        int currentCharge = this.device.getDeviceBattery();
+        if (currentCharge + charge > 20)
+        {
+            this.device.setDeviceBattery(20);
+            System.out.println("You have reached a Maximum amount of 20 points on your jumper device");
+        }
+        else {
+            this.device.setDeviceBattery(currentCharge + charge);
+        }
+    }
+
+    public void removeDeviceBattery(int charge)
+    {
+        int currentCharge = this.device.getDeviceBattery();
+        this.device.setDeviceBattery(currentCharge - charge);
+    }
+
     public int getCurrentBuilding() {
         return currentBuilding;
     }
