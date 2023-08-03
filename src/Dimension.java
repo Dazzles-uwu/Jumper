@@ -101,13 +101,14 @@ public class Dimension {
 
     public boolean canPlayerJump(int playerCurrentBuilding, String lateralMovement)
     {
+        int maxBuilding = this.buildings.size();
         if (!this.buildings.isEmpty())
         {
             if (!isBuildingFrozen(playerCurrentBuilding))
             {
                 if (lateralMovement.equals(Jumper.FORWARD))
                 {
-                    return playerCurrentBuilding + getPlayerJumpHeight(playerCurrentBuilding) <= 15;
+                    return playerCurrentBuilding + getPlayerJumpHeight(playerCurrentBuilding) <= maxBuilding;
                 }
                 else if (lateralMovement.equals(Jumper.BACKWARD))
                 {
