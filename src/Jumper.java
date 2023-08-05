@@ -187,6 +187,7 @@ public class Jumper {
             else {
                 this.player.setWinGame(true);
                 this.gameOver = true;
+                System.out.println("Congratulations " + this.player.getName() + ", you have won the game!");
             }
         }
     }
@@ -200,6 +201,7 @@ public class Jumper {
         if (Validation.isBlank(fileContent.trim()))
         {
             this.gameOver = true;
+            System.out.println("Unable to read or empty text file");
         } else {
             String[] individualBuilding = fileContent.split("\n");
 
@@ -249,6 +251,7 @@ public class Jumper {
         {
             if (currentCharge - 5 <= 0)
             {
+                System.out.println("Unfortunate " + this.player.getName() + ", you have lost the game as your device has no charge left");
                 this.gameOver = true;
             }
             this.player.removeDeviceBattery(5);
@@ -262,6 +265,7 @@ public class Jumper {
             //Checks to see if there is anymore battery left
             if (currentCharge - jumpCost <= 0)
             {
+                System.out.println("Unfortunate " + this.player.getName() + ", you have lost the game as your device has no charge left");
                 this.gameOver = true;
             }
             this.player.removeDeviceBattery(jumpCost);
@@ -270,6 +274,7 @@ public class Jumper {
         {
             if (currentCharge - 1 <= 0)
             {
+                System.out.println("Unfortunate " + this.player.getName() + ", you have lost the game as your device has no charge left");
                 this.gameOver = true;
             }
             this.player.removeDeviceBattery(1);
