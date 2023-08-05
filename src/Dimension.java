@@ -253,6 +253,15 @@ public class Dimension {
         return false;
     }
 
+    public void setFuelCellOff(int playerBuilding)
+    {
+        if (!this.buildings.isEmpty())
+        {
+            // - 1 because the .get starts from 0 and playerBuilding starts from 1
+            buildings.get(playerBuilding - 1).setFuelCell(false);
+        }
+    }
+
     public boolean isWebTrapped(int playerBuilding)
     {
         if (!this.buildings.isEmpty())

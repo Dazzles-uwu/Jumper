@@ -168,6 +168,7 @@ public class Jumper {
         {
             int cellAmountFound = this.player.getFuelCellFound();
             this.player.setFuelCellFound(cellAmountFound + 1);
+            this.dimension.setFuelCellOff(newPosition);
             calculateBattery(Jumper.RECHARGE, currentPosition, newPosition);
         }
 
@@ -188,11 +189,6 @@ public class Jumper {
                 this.gameOver = true;
             }
         }
-    }
-
-    public void saveStatistics()
-    {
-
     }
 
     public void readFile()
