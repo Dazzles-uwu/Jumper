@@ -29,8 +29,9 @@ public class Player {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String name)
+    {
+        this.name = name.substring(0, 1).toUpperCase() + name.substring(1);
     }
 
     public int getFuelCellFound() {
@@ -93,6 +94,7 @@ public class Player {
     {
         return "Player Name: " + this.name + "\n" +
                 "Player Turn: " + turn + "\n" +
-                "Device Fuel: " + this.device.getDeviceBattery();
+                "Device Fuel: " + this.device.getDeviceBattery() + "\n" +
+                "Fuel Cell Found: " + this.fuelCellFound;
     }
 }

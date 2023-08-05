@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Dimension {
 
@@ -8,6 +9,79 @@ public class Dimension {
     public Dimension()
     {
         this.buildings = new ArrayList<Building>();
+    }
+
+    public void changeDimension()
+    {
+        Random random = new Random();
+        int buildingsAmount = this.buildings.size();
+        int randomNumber;
+        int currentTurn = Player.turn;
+
+        //Jumble up Fuel Cells
+        if (currentTurn % 3 == 0) {
+            //Change it all to false
+            for (int i = 0; i < this.buildings.size(); i++)
+            {
+                if (this.buildings.get(i).isFuelCell())
+                {
+                    this.buildings.get(i).setFuelCell(false);
+                }
+            }
+
+            int randomNumberOfFuelCells = random.nextInt(4) + 1;
+            for (int i = 0; i < randomNumberOfFuelCells; i++)
+            {
+                boolean isNotFuelCell = false;
+                //Ensure the random number is distinct
+                while (!isNotFuelCell)
+                {
+                    randomNumber = random.nextInt(buildingsAmount);
+                    if (!this.buildings.get(randomNumber).isFuelCell())
+                    {
+                        this.buildings.get(randomNumber).setFuelCell(true);
+                        isNotFuelCell = true;
+                    }
+                }
+            }
+        }
+
+        //Change height and Set Freeze and Web to false
+        for (int i = 0; i < this.buildings.size(); i++)
+        {
+            //Change the Height
+            randomNumber = random.nextInt(5) + 1;
+            this.buildings.get(i).setHeight(randomNumber);
+
+            //If building has Web, set false as we
+            // will randomly assign a building with web later
+            if (this.buildings.get(i).isWeb())
+            {
+                this.buildings.get(i).setWeb(false);
+            }
+
+            if (this.buildings.get(i).isFreeze())
+            {
+                this.buildings.get(i).setFreeze(false);
+            }
+        }
+
+        //Set a building Webbed
+        randomNumber = random.nextInt(buildingsAmount);
+        this.buildings.get(randomNumber).setWeb(true);
+
+        //Ensure that webbed building and frozen building are different
+        boolean findBuildingNotWebbed = false;
+        while (!findBuildingNotWebbed)
+        {
+            randomNumber = random.nextInt(buildingsAmount);
+            if (!this.buildings.get(randomNumber).isWeb())
+            {
+                //Set a building Frozen
+                this.buildings.get(randomNumber).setFreeze(true);
+                findBuildingNotWebbed = true;
+            }
+        }
     }
 
     public String displayDimension()

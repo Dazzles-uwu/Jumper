@@ -8,7 +8,7 @@ public class FileIO {
 
     public FileIO()
     {
-
+        this.fileName = "default.txt";
     }
 
     public FileIO(String name)
@@ -49,8 +49,8 @@ public class FileIO {
     {
         try
         {
-            FileWriter writer = new FileWriter(this.fileName);
-            writer.write(line);
+            FileWriter writer = new FileWriter(this.fileName, true);
+            writer.append(line).append("\n");
             writer.close();
         }
         catch (Exception e)

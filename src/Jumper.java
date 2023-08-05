@@ -2,8 +2,8 @@ import java.util.ArrayList;
 
 public class Jumper {
 
-    public static final String inputFile = "src/buildings.txt";
-    public static final String outputFile = "src/outcome.txt";
+    public static final String INPUT_FILE = "src/buildings.txt";
+    public static final String OUTPUT_FILE = "src/outcome.txt";
     public static final String FORWARD = "forward";
     public static final String BACKWARD = "backward";
     public static final String RECHARGE = "recharge";
@@ -18,7 +18,12 @@ public class Jumper {
     {
         Jumper jumperObj = new Jumper();
         jumperObj.readFile();
-        jumperObj.startProgram();
+        if (!jumperObj.gameOver) {
+            jumperObj.startProgram();
+        } else {
+            System.out.println("Cannot Read File or Internal Server Error");
+        }
+        jumperObj.writeFile();
     }
 
     public Jumper()
@@ -35,6 +40,7 @@ public class Jumper {
         {
             displayWorld();
             promptUserInput();
+            this.dimension.changeDimension();
         }
 
     }
@@ -131,17 +137,7 @@ public class Jumper {
         int newPlayerPosition = this.dimension.getPlayerNewBuildingPosition(this.player.getCurrentBuilding(), lateralMovement);
         int currentPlayerPosition = this.player.getCurrentBuilding();
 
-        if (this.dimension.isFuelCell(newPlayerPosition))
-        {
-            int cellAmountFound = this.player.getFuelCellFound();
-            this.player.setFuelCellFound(cellAmountFound + 1);
-            calculateBattery(Jumper.RECHARGE, currentPlayerPosition, newPlayerPosition);
-        }
-
-        if (this.dimension.isWebTrapped(newPlayerPosition))
-        {
-            calculateBattery(Jumper.WEB, currentPlayerPosition, newPlayerPosition);
-        }
+        checkItemsPlayerLandsOn(currentPlayerPosition, newPlayerPosition);
 
         //This function always runs because it always cost fuel to jump
         calculateBattery(Jumper.DEPLETE, currentPlayerPosition, newPlayerPosition);
@@ -155,9 +151,43 @@ public class Jumper {
 
     public void playerStayed()
     {
+        int currentPlayerPosition = this.player.getCurrentBuilding();
+
+        checkItemsPlayerLandsOn(currentPlayerPosition, currentPlayerPosition);
+
         //We placed some random arbitrary number inside the second and third parameter as we do not need it for stay
-        calculateBattery(Jumper.STAY, 0, 0);
+        calculateBattery(Jumper.STAY, this.player.getCurrentBuilding(), this.player.getCurrentBuilding());
+
         Player.turn++;
+    }
+
+    public void checkItemsPlayerLandsOn(int currentPosition, int newPosition)
+    {
+        //Operations if there is a Fuel Cell in new Player Position
+        if (this.dimension.isFuelCell(newPosition))
+        {
+            int cellAmountFound = this.player.getFuelCellFound();
+            this.player.setFuelCellFound(cellAmountFound + 1);
+            calculateBattery(Jumper.RECHARGE, currentPosition, newPosition);
+        }
+
+        //Operations if there is a Web in the player's current position
+        if (this.dimension.isWebTrapped(newPosition))
+        {
+            calculateBattery(Jumper.WEB, currentPosition, newPosition);
+        }
+
+        //Checks to see if the game is over and the player has won
+        if (this.player.getDeviceBattery() >= 0 && this.dimension.isExitPortal(newPosition))
+        {
+            if (this.dimension.isBuildingFrozen(newPosition)) {
+                System.out.println("Cannot end the game you are Jumping on a frozen building. Please skip a turn");
+            }
+            else {
+                this.player.setWinGame(true);
+                this.gameOver = true;
+            }
+        }
     }
 
     public void saveStatistics()
@@ -167,31 +197,48 @@ public class Jumper {
 
     public void readFile()
     {
-        FileIO ioObj = new FileIO(inputFile);
+        FileIO ioObj = new FileIO(INPUT_FILE);
 
         String fileContent = ioObj.readFile();
 
-        String[] individualBuilding = fileContent.split("\n");
-
-        for (int i = 0; i < individualBuilding.length; i++)
+        if (Validation.isBlank(fileContent.trim()))
         {
-            String[] buildingInfo = individualBuilding[i].split(",");
-            int buildingNumber = i + 1;
-            int height = Integer.parseInt(buildingInfo[0]);
-            boolean exitPortal = Boolean.parseBoolean(buildingInfo[1].toLowerCase());
-            boolean fuelCell = Boolean.parseBoolean(buildingInfo[2].toLowerCase());
-            boolean web = Boolean.parseBoolean(buildingInfo[3].toLowerCase());
-            boolean freeze = Boolean.parseBoolean(buildingInfo[4].toLowerCase());
+            this.gameOver = true;
+        } else {
+            String[] individualBuilding = fileContent.split("\n");
 
-            this.dimension.addBuilding(buildingNumber, height, exitPortal, fuelCell, web, freeze);
+            for (int i = 0; i < individualBuilding.length; i++)
+            {
+                String[] buildingInfo = individualBuilding[i].split(",");
+                int buildingNumber = i + 1;
+                int height = Integer.parseInt(buildingInfo[0]);
+                boolean exitPortal = Boolean.parseBoolean(buildingInfo[1].toLowerCase());
+                boolean fuelCell = Boolean.parseBoolean(buildingInfo[2].toLowerCase());
+                boolean web = Boolean.parseBoolean(buildingInfo[3].toLowerCase());
+                boolean freeze = Boolean.parseBoolean(buildingInfo[4].toLowerCase());
+
+                this.dimension.addBuilding(buildingNumber, height, exitPortal, fuelCell, web, freeze);
+            }
         }
-
         //System.out.println(this.dimension.printBuilding());
     }
 
     public void writeFile()
     {
+        FileIO ioObj = new FileIO(OUTPUT_FILE);
 
+        String gameContent = Player.turn + "," + this.player.getFuelCellFound() + ",";
+
+        if (this.player.isWinGame())
+        {
+            gameContent += "win,";
+        }
+        else {
+            gameContent += "lose,";
+        }
+
+        gameContent += this.player.getName();
+        ioObj.writeFile(gameContent);
     }
 
     public void calculateBattery(String jumperStatus, int currentPlayerPosition, int newPlayerPosition)
