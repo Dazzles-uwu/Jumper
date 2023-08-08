@@ -97,4 +97,15 @@ public class Player {
                 "Device Fuel: " + this.device.getDeviceBattery() + "\n" +
                 "Fuel Cell Found: " + this.fuelCellFound;
     }
+
+    public String playerTestingInformation()
+    {
+        return "Player Name: " + this.name + "\n" +
+                "Current Building: " + this.currentBuilding + "\n" +
+                "Fuel Cell Found: " + this.fuelCellFound + "\n" +
+                "DeviceBattery: " + this.device.getDeviceBattery() + "\n" +
+                "is Win: " + this.winGame + "\n" +
+                "Player Turn: " + turn + "\n";
+    }
+
 }
