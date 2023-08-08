@@ -15,7 +15,7 @@ public class Dimension {
     {
         Random random = new Random();
         int buildingsAmount = this.buildings.size();
-        int randomNumber;
+        int randomNumber = 0;
         int currentTurn = Player.turn;
 
         //Jumble up Fuel Cells
